@@ -2,8 +2,9 @@ package tools;
 
 import java.util.ArrayList;
 
+
 public class clashDetect {
-	public static boolean Detect(ArrayList<byte[]> choosed,byte[] toChoose) {
+	public static boolean Detect(ArrayList<int[]> choosed,int[] toChoose) {
 		int termToChoose=0;
 		int termHasChoose=0;
 		/*
@@ -63,10 +64,7 @@ public class clashDetect {
 		return false;
 	}
 	
-	public static boolean hasChoosed(ArrayList<byte[]> choosed,byte[] toChoose) {
-		if(toChoose[ExcelReader.CLASSROOM_COL]==-1) {
-			return false;
-		}
+	public static boolean hasChoosed(ArrayList<int[]> choosed,int[] toChoose) {
 		for(int i=0;i<choosed.size();i++) {
 			if(choosed.get(i)[ExcelReader.NAME_COL]==toChoose[ExcelReader.NAME_COL]) {
 				return true;
@@ -75,7 +73,7 @@ public class clashDetect {
 		return false;
 	}
 	
-	public static boolean DetectTime(ArrayList<byte[]> choosed,int time,int term) {
+	public static boolean DetectTime(ArrayList<int[]> choosed,int time,int term) {
 		int termHasChoose;
 		for(int i=0;i<choosed.size();i++) {
 			termHasChoose=choosed.get(i)[ExcelReader.TERM_COL];
@@ -93,26 +91,47 @@ public class clashDetect {
 	/*
 	 * 默认时间都是20以内，通过前后半学期来分辨
 	 */
-	public static boolean DetectClassroom(int time,int terms,int classroom) {
+	public static boolean DetectClassroom(ArrayList<int[]> allCourse,int time,int terms,int classroom) {
 		int termHasChoose;
-		for(int i=0;i<ExcelReader.allCourse.size();i++) {
-				termHasChoose=ExcelReader.allCourse.get(i)[ExcelReader.TERM_COL];
-				if(ExcelReader.allCourse.get(i)[ExcelReader.WEEKTIME1_COL]==time) {
+		for(int i=0;i<allCourse.size();i++) {
+				termHasChoose=allCourse.get(i)[ExcelReader.TERM_COL];
+				if(allCourse.get(i)[ExcelReader.WEEKTIME1_COL]==time) {
 					if(terms==termHasChoose||terms==2||termHasChoose==2) {
-						if(ExcelReader.allCourse.get(i)[ExcelReader.CLASSROOM_COL]==classroom) {
+						if(allCourse.get(i)[ExcelReader.CLASSROOM_COL]==classroom) {
 							return true;
 						}
 					}
 				}
 				
-				if(ExcelReader.allCourse.get(i)[ExcelReader.WEEKTIME2_COL]==time) {
+				if(allCourse.get(i)[ExcelReader.WEEKTIME2_COL]==time) {
 					if(terms==termHasChoose||terms==2||termHasChoose==2) {
-						if(ExcelReader.allCourse.get(i)[ExcelReader.CLASSROOM_COL]==classroom) {
+						if(allCourse.get(i)[ExcelReader.CLASSROOM_COL]==classroom) {
 							return true;
 						}
 					}
 				}
 		}
 		return false;
+	}
+	
+	public static boolean DetectTeacher(ArrayList<int[]> teacher,int teacherIndex,int time,int term) {
+		if(term==0) {
+			if(teacher.get(teacherIndex-1)[time-1]==1) {
+				return true;
+			}
+		}else if(term==1){
+			if(teacher.get(teacherIndex-1)[time-1+20]==1) {
+				return true;
+			}
+		}else if(term==2) {
+			if(teacher.get(teacherIndex-1)[time-1+20]==1) {
+				return true;
+			}
+			if(teacher.get(teacherIndex-1)[time]==1) {
+				return true;
+			}
+		}
+		return false;
+		
 	}
 }
